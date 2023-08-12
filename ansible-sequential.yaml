@@ -1,0 +1,19 @@
+---
+- name: This is an usual sequential implementation.
+  hosts: localhost
+  tasks:
+    - name: Replacing name in property file server 1.
+      replace:
+        path: /Users/navindurai/Programming/Ansible/parallel_processing/server1/application.properties
+        regexp: '\[name\]'
+        replace: 'Navin'
+    - name: Replacing name in property file server 2.
+      replace:
+        path: /Users/navindurai/Programming/Ansible/parallel_processing/server2/application.properties
+        regexp: '\[name\]'
+        replace: 'Natwest'
+    - name: Replacing name in property file server 3.
+      replace:
+        path: /Users/navindurai/Programming/Ansible/parallel_processing/server3/application.properties
+        regexp: '\[name\]'
+        replace: 'RBS'

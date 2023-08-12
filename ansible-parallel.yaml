@@ -1,0 +1,72 @@
+---
+- name: This is an Parallel implementation.
+  hosts: localhost
+  tasks:
+    - name: Replacing name in property file server 1.
+      replace:
+        path: /Users/navindurai/Programming/Ansible/parallel_processing/server1/application.properties
+        regexp: '\[name\]'
+        replace: 'Navin'
+      async: 4000
+      poll: 0
+      register: task1
+
+    - name: Replacing name in property file server 2.
+      replace:
+        path: /Users/navindurai/Programming/Ansible/parallel_processing/server2/application.properties
+        regexp: '\[name\]'
+        replace: 'Natwest'
+      async: 4000
+      poll: 0
+      register: task2
+
+    - name: Replacing name in property file server 3.
+      replace:
+        path: /Users/navindurai/Programming/Ansible/parallel_processing/server3/application.properties
+        regexp: '\[name\]'
+        replace: 'RBS'
+      async: 4000
+      poll: 0
+      register: task3
+
+    - name: Waiting to finish replacement 1.
+      ansible.builtin.async_status:
+        jid: "{{ task1.ansible_job_id }}"
+      register: job_result
+      loop: "{{ ansible_play_batch }}"
+      until: job_result.finished
+      retries: 60
+      delay: 10
+
+    - name: Waiting to finish replacement 2.
+      ansible.builtin.async_status:
+        jid: "{{ task2.ansible_job_id }}"
+      register: job_result
+      loop: "{{ ansible_play_batch }}"
+      until: job_result.finished
+      retries: 60
+      delay: 10
+
+    - name: Waiting to finish replacement 3.
+      ansible.builtin.async_status:
+        jid: "{{ task3.ansible_job_id }}"
+      register: job_result
+      loop: "{{ ansible_play_batch }}"
+      until: job_result.finished
+      retries: 60
+      delay: 10
+
+    - name: Clonning Repo.
+      ansible.builtin.git: 
+        repo: https://github.com/Navin3d/Optikraft-Angular.git
+        dest: /Users/navindurai/Programming/Ansible/Optikraft-Angular
+
+    - name: Installing Dependency.
+      command: npm i
+      args:
+        chdir: /Users/navindurai/Programming/Ansible/Optikraft-Angular
+
+    - name: Start server.
+      command: ng serve -o
+      args:
+        chdir: /Users/navindurai/Programming/Ansible/Optikraft-Angular
